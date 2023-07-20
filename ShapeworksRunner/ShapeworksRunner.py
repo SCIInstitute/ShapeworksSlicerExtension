@@ -320,6 +320,11 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def generateShapeworksProjectJson(self, toggle):
     print("generateShapeworksProjectJson {0}".format(toggle))
     self.addLog("generateShapeworksProjectJson {0}".format(toggle))
+    print("Listing things to save:")
+    for k,v in slicer.util.getNodes().items():
+      if v.GetTypeDisplayName() == "Segmentation":
+        print("TO SAVE: ", k)
+    print("Done.")
 
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.logic.shapeworksPath, repr(inputParams))
