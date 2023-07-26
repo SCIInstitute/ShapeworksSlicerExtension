@@ -104,12 +104,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.showDetailedLogDuringExecutionCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
 
-    # self.ui.cleaverFeatureScalingParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverSamplingParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverRateParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverAdditionalParametersWidget.connect("textChanged(const QString&)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverRemoveBackgroundMeshCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverPaddingPercentSpinBox.connect("valueChanged(int)", self.updateParameterNodeFromGUI)
     self.ui.customShapeworksPathSelector.connect("currentPathChanged(const QString&)", self.updateParameterNodeFromGUI)
 
     # Add vertical spacer
@@ -222,12 +216,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.showDetailedLogDuringExecutionCheckBox.checked = (self._parameterNode.GetParameter("showDetailedLogDuringExecution") == "true")
     self.ui.keepTemporaryFilesCheckBox.checked = (self._parameterNode.GetParameter("keepTemporaryFiles") == "true")
 
-    # self.ui.cleaverFeatureScalingParameterWidget.value = float(self._parameterNode.GetParameter("cleaverFeatureScalingParameter"))
-    # self.ui.cleaverSamplingParameterWidget.value = float(self._parameterNode.GetParameter("cleaverSamplingParameter"))
-    # self.ui.cleaverRateParameterWidget.value = float(self._parameterNode.GetParameter("cleaverRateParameter"))
-    # self.ui.cleaverAdditionalParametersWidget.text = self._parameterNode.GetParameter("cleaverAdditionalParameters")
-    # self.ui.cleaverRemoveBackgroundMeshCheckBox.checked = (self._parameterNode.GetParameter("cleaverRemoveBackgroundMesh") == "true")
-    # self.ui.cleaverPaddingPercentSpinBox.value = int(self._parameterNode.GetParameter("cleaverPaddingPercent"))
     self.ui.customShapeworksPathSelector.setCurrentPath(self._parameterNode.GetParameter("customShapeworksPath"))
 
     # Update buttons states and tooltips
@@ -256,13 +244,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode.SetParameter("showDetailedLogDuringExecution", "true" if self.ui.showDetailedLogDuringExecutionCheckBox.checked else "false")
     self._parameterNode.SetParameter("keepTemporaryFiles", "true" if self.ui.keepTemporaryFilesCheckBox.checked else "false")
 
-    #Cleaver parameters
-    # self._parameterNode.SetParameter("cleaverFeatureScalingParameter", str(self.ui.cleaverFeatureScalingParameterWidget.value))
-    # self._parameterNode.SetParameter("cleaverSamplingParameter", str(self.ui.cleaverSamplingParameterWidget.value))
-    # self._parameterNode.SetParameter("cleaverRateParameter", str(self.ui.cleaverRateParameterWidget.value))
-    # self._parameterNode.SetParameter("cleaverAdditionalParameters", self.ui.cleaverAdditionalParametersWidget.text)
-    # self._parameterNode.SetParameter("cleaverRemoveBackgroundMesh", "true" if self.ui.cleaverRemoveBackgroundMeshCheckBox.checked else "false")
-    # self._parameterNode.SetParameter("cleaverPaddingPercent", str(self.ui.cleaverPaddingPercentSpinBox.value))
     self._parameterNode.SetParameter("customShapeworksPath", self.ui.customShapeworksPathSelector.currentPath)
 
     self._parameterNode.EndModify(wasModified)
@@ -282,13 +263,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     print("clearing segmentSelectorCombBox")
     self.ui.segmentSelectorCombBox.clear()
-    #oldIndex = self.ui.segmentSelectorCombBox.checkedIndexes()
-    #oldCount = self.ui.segmentSelectorCombBox.count
-
-    # for j in range(0, self.ui.inputSegmentationSelector.nodeCount()):
-    #   node = self.ui.inputSegmentationSelector.nodeFromIndex(j)
-    #   print(node.GetName())
-    #   print(self.ui.inputSegmentationSelector.checkState(node))
 
     #populate segments
     for inputSeg in self.ui.inputSegmentationSelector.checkedNodes():
@@ -302,16 +276,7 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
           print(segmentIDs.GetValue(index))
           self.ui.segmentSelectorCombBox.addItem("{0}: {1}".format(inputSeg.GetName(), segmentIDs.GetValue(index)))
 
-    #Restore index - often we will be reloading the data from the same segmentation, so re-select items number of items is the same
-    #if oldCount == self.ui.segmentSelectorCombBox.count:
-    #  for index in oldIndex:
-    #    self.ui.segmentSelectorCombBox.setCheckState(index, qt.Qt.Checked)
-
     self.updateParameterNodeFromGUI()
-
-
-  # def updateGUIFromMRML(self):
-    # parameterNode = self.parameterNodeSelector.currentNode()
 
   def onShowTemporaryFilesFolder(self):
     qt.QDesktopServices().openUrl(qt.QUrl("file:///" + self.logic.getTempDirectoryBase(), qt.QUrl.TolerantMode));
@@ -385,22 +350,15 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.statusLabel.plainText = ''
     slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
     try:
-      #self.logic.setCustomShapeworksPath(self.ui.customShapeworksPathSelector.currentPath)
-
       self.logic.deleteTemporaryFiles = not self.ui.keepTemporaryFilesCheckBox.checked
       self.logic.logStandardOutput = self.ui.showDetailedLogDuringExecutionCheckBox.checked
 
-      #Get list of segments to mesh
+      #Get list of segments to process
       segmentIndexes = self.ui.segmentSelectorCombBox.checkedIndexes()
       segments = []
 
       for index in segmentIndexes:
         segments.append(self.ui.segmentSelectorCombBox.itemText(index.row()))
-
-      # self.logic.createMeshFromSegmentationCleaver(self.ui.inputSegmentationSelector.currentNode(),
-      #   self.ui.outputModelSelector.currentNode(), segments, self.ui.cleaverAdditionalParametersWidget.text,
-      #   self.ui.cleaverRemoveBackgroundMeshCheckBox.isChecked(),
-      #   self.ui.cleaverPaddingPercentSpinBox.value * 0.01, self.ui.cleaverFeatureScalingParameterWidget.value, self.ui.cleaverSamplingParameterWidget.value, self.ui.cleaverRateParameterWidget.value)
 
     except Exception as e:
       print(e)
@@ -466,12 +424,6 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     self.setParameterIfNotDefined(parameterNode, "showDetailedLogDuringExecution", "false")
     self.setParameterIfNotDefined(parameterNode, "keepTemporaryFiles", "false")
 
-    # self.setParameterIfNotDefined(parameterNode, "cleaverFeatureScalingParameter", "2.0")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverSamplingParameter", "0.2")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverRateParameter", "0.2")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverAdditionalParameters", "")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverRemoveBackgroundMesh", "true")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverPaddingPercent", "10")
     self.setParameterIfNotDefined(parameterNode, "customShapeworksPath", "")
 
   def setParameterIfNotDefined(self, parameterNode, key, value):
@@ -515,7 +467,6 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
       if customPath == settings.value(self.customShapeworksPathSettingsKey):
         return
     settings.setValue(self.customShapeworksPathSettingsKey, customPath)
-    # Update Cleaver bin dir
     self.shapeworksPath = None
     self.getShapeworksPath()
 
@@ -580,7 +531,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
 
     self.addLog('Shapeworks is started in working directory: ' + shapeworksTempDir)
 
-    ep = self.runShapeworks(inputParamsCleaver, self.getShapeworksPath())
+    ep = self.runShapeworks(inputParams, self.getShapeworksPath())
     self.logProcessOutput(ep, self.shapeworksFilename)
 
     # Clean up
@@ -626,5 +577,3 @@ class ShapeworksRunnerTest(ScriptedLoadableModuleTest):
     self.assertTrue(0)
 
     self.delayDisplay('Test passed!')
-
-METHOD_CLEAVER = 'CLEAVER'
