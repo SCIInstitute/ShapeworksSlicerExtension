@@ -12,8 +12,8 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="ctkCollapsibleButton" name="defaultinputParametersCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="defaultinputParametersCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Parameter set</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
@@ -25,31 +25,31 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="parameterNodeSelector">
+       <widget class="qMRMLNodeComboBox" name="parameterNodeSelector" native="true">
         <property name="enabled">
          <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Pick parameter set</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLScriptedModuleNode</string>
          </stringlist>
         </property>
-        <property name="showHidden">
+        <property name="showHidden" stdset="0">
          <bool>true</bool>
         </property>
-        <property name="showChildNodeTypes">
+        <property name="showChildNodeTypes" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="hideChildNodeTypes">
+        <property name="hideChildNodeTypes" stdset="0">
          <stringlist/>
         </property>
-        <property name="baseName">
+        <property name="baseName" stdset="0">
          <string>ShapeworksRunner</string>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
         </property>
        </widget>
@@ -58,8 +58,8 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="inputParametersCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="inputParametersCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Inputs</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
@@ -71,28 +71,28 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qMRMLCheckableNodeComboBox" name="inputSegmentationSelector">
+       <widget class="qMRMLCheckableNodeComboBox" name="inputSegmentationSelector" native="true">
         <property name="enabled">
          <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Shapeworks will analyze these segmentation nodes.</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLSegmentationNode</string>
          </stringlist>
         </property>
-        <property name="showChildNodeTypes">
+        <property name="showChildNodeTypes" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="noneEnabled">
+        <property name="noneEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="removeEnabled">
+        <property name="removeEnabled" stdset="0">
          <bool>false</bool>
         </property>
        </widget>
@@ -115,22 +115,22 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="qMRMLNodeComboBox" name="inputModelSelector">
+       <widget class="qMRMLNodeComboBox" name="inputModelSelector" native="true">
         <property name="toolTip">
          <string>Volumetric mesh will be generated based on this surface - TetGen only.</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLModelNode</string>
          </stringlist>
         </property>
-        <property name="showChildNodeTypes">
+        <property name="showChildNodeTypes" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="addEnabled">
+        <property name="addEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="removeEnabled">
+        <property name="removeEnabled" stdset="0">
          <bool>false</bool>
         </property>
        </widget>
@@ -183,8 +183,8 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="outputParametersCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="outputParametersCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Outputs</string>
      </property>
      <layout class="QFormLayout" name="formLayout_3">
@@ -196,25 +196,25 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="qMRMLNodeComboBox" name="outputModelSelector">
+       <widget class="qMRMLNodeComboBox" name="outputModelSelector" native="true">
         <property name="enabled">
          <bool>true</bool>
         </property>
         <property name="toolTip">
          <string>Created volumetric mesh</string>
         </property>
-        <property name="nodeTypes">
+        <property name="nodeTypes" stdset="0">
          <stringlist>
           <string>vtkMRMLModelNode</string>
          </stringlist>
         </property>
-        <property name="showChildNodeTypes">
+        <property name="showChildNodeTypes" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="editEnabled">
+        <property name="editEnabled" stdset="0">
          <bool>false</bool>
         </property>
-        <property name="renameEnabled">
+        <property name="renameEnabled" stdset="0">
          <bool>true</bool>
         </property>
        </widget>
@@ -223,11 +223,11 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="advancedCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="advancedCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Advanced</string>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>true</bool>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -246,6 +246,9 @@
          </item>
          <item row="0" column="1">
           <widget class="QDoubleSpinBox" name="cleaverFeatureScalingParameterWidget">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
            <property name="toolTip">
             <string>To make the output mesh elements smaller: decrease value of `--feature_scaling`. </string>
            </property>
@@ -264,120 +267,28 @@
           </widget>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel" name="cleaverSamplingLabel">
-           <property name="text">
-            <string>Sampling rate (increase for finer details):</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QDoubleSpinBox" name="cleaverSamplingParameterWidget">
-           <property name="toolTip">
-            <string>To make the output mesh preserve small details (at the cost of more computation time and memory usage): increase `--sampling-rate` (up to 1.0). </string>
-           </property>
-           <property name="minimum">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.200000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="cleaverRateLabel">
-           <property name="text">
-            <string>Rate of change of element size:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QDoubleSpinBox" name="cleaverRateParameterWidget">
-           <property name="toolTip">
-            <string>Increase parameter value to allow more variation in element size,  1 is uniform.</string>
-           </property>
-           <property name="maximum">
-            <double>1.000000000000000</double>
-           </property>
-           <property name="singleStep">
-            <double>0.100000000000000</double>
-           </property>
-           <property name="value">
-            <double>0.200000000000000</double>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
           <widget class="QLabel" name="cleaverAdditionalOptionsLabel">
            <property name="text">
             <string>Additional command line options:</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="1" column="1">
           <widget class="QLineEdit" name="cleaverAdditionalParametersWidget">
            <property name="toolTip">
             <string>See description of all parameters in module documentation (Help &amp; Acknowledgment section).</string>
            </property>
           </widget>
          </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="cleaverRemoveBackgroundLabel">
-           <property name="text">
-            <string>Remove background mesh:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1">
-          <widget class="QCheckBox" name="cleaverRemoveBackgroundMeshCheckBox">
-           <property name="toolTip">
-            <string>Remove background mesh (filling segmentation reference geometry box).</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="cleaverPaddingLabel">
-           <property name="text">
-            <string>Background padding:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QSpinBox" name="cleaverPaddingPercentSpinBox">
-           <property name="toolTip">
-            <string>Add padding around the segments to ensure some minimum thickness to the background mesh. Increase value if segments have extrusions towards the edge of the padded bounding box.</string>
-           </property>
-           <property name="suffix">
-            <string> %</string>
-           </property>
-           <property name="maximum">
-            <number>200</number>
-           </property>
-           <property name="value">
-            <number>10</number>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="0">
+         <item row="2" column="0">
           <widget class="QLabel" name="shapeworksCustomExecutableLabel">
            <property name="text">
             <string>Custom Shapeworks executable path:</string>
            </property>
           </widget>
          </item>
-         <item row="6" column="1">
-          <widget class="ctkPathLineEdit" name="customShapeworksPathSelector">
+         <item row="2" column="1">
+          <widget class="ctkPathLineEdit" name="customShapeworksPathSelector" native="true">
            <property name="toolTip">
             <string>Set shapeworks-cli executable path.
  If value is empty then shapeworks-cli bundled with this extension will be used.</string>
@@ -454,16 +365,16 @@
     </widget>
    </item>
    <item>
-    <widget class="ctkCollapsibleButton" name="displayParametersCollapsibleButton">
-     <property name="text">
+    <widget class="ctkCollapsibleButton" name="displayParametersCollapsibleButton" native="true">
+     <property name="text" stdset="0">
       <string>Display</string>
      </property>
-     <property name="collapsed">
+     <property name="collapsed" stdset="0">
       <bool>true</bool>
      </property>
      <layout class="QFormLayout" name="formLayout_7">
       <item row="0" column="0">
-       <widget class="qMRMLClipNodeWidget" name="clipNodeWidget"/>
+       <widget class="qMRMLClipNodeWidget" name="clipNodeWidget" native="true"/>
       </item>
      </layout>
     </widget>
@@ -531,6 +442,11 @@
    <extends>QWidget</extends>
    <header>qSlicerWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>qMRMLCheckableNodeComboBox</class>
+   <extends>QWidget</extends>
+   <header>qmrmlcheckablenodecombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -104,12 +104,12 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.showDetailedLogDuringExecutionCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
 
-    # self.ui.cleaverFeatureScalingParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverSamplingParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverRateParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverAdditionalParametersWidget.connect("textChanged(const QString&)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverRemoveBackgroundMeshCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
-    # self.ui.cleaverPaddingPercentSpinBox.connect("valueChanged(int)", self.updateParameterNodeFromGUI)
+    self.ui.cleaverFeatureScalingParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
+    self.ui.cleaverSamplingParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
+    self.ui.cleaverRateParameterWidget.connect("valueChanged(double)", self.updateParameterNodeFromGUI)
+    self.ui.cleaverAdditionalParametersWidget.connect("textChanged(const QString&)", self.updateParameterNodeFromGUI)
+    self.ui.cleaverRemoveBackgroundMeshCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
+    self.ui.cleaverPaddingPercentSpinBox.connect("valueChanged(int)", self.updateParameterNodeFromGUI)
     self.ui.customShapeworksPathSelector.connect("currentPathChanged(const QString&)", self.updateParameterNodeFromGUI)
 
     # Add vertical spacer
@@ -222,12 +222,12 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.showDetailedLogDuringExecutionCheckBox.checked = (self._parameterNode.GetParameter("showDetailedLogDuringExecution") == "true")
     self.ui.keepTemporaryFilesCheckBox.checked = (self._parameterNode.GetParameter("keepTemporaryFiles") == "true")
 
-    # self.ui.cleaverFeatureScalingParameterWidget.value = float(self._parameterNode.GetParameter("cleaverFeatureScalingParameter"))
-    # self.ui.cleaverSamplingParameterWidget.value = float(self._parameterNode.GetParameter("cleaverSamplingParameter"))
-    # self.ui.cleaverRateParameterWidget.value = float(self._parameterNode.GetParameter("cleaverRateParameter"))
-    # self.ui.cleaverAdditionalParametersWidget.text = self._parameterNode.GetParameter("cleaverAdditionalParameters")
-    # self.ui.cleaverRemoveBackgroundMeshCheckBox.checked = (self._parameterNode.GetParameter("cleaverRemoveBackgroundMesh") == "true")
-    # self.ui.cleaverPaddingPercentSpinBox.value = int(self._parameterNode.GetParameter("cleaverPaddingPercent"))
+    self.ui.cleaverFeatureScalingParameterWidget.value = float(self._parameterNode.GetParameter("cleaverFeatureScalingParameter"))
+    self.ui.cleaverSamplingParameterWidget.value = float(self._parameterNode.GetParameter("cleaverSamplingParameter"))
+    self.ui.cleaverRateParameterWidget.value = float(self._parameterNode.GetParameter("cleaverRateParameter"))
+    self.ui.cleaverAdditionalParametersWidget.text = self._parameterNode.GetParameter("cleaverAdditionalParameters")
+    self.ui.cleaverRemoveBackgroundMeshCheckBox.checked = (self._parameterNode.GetParameter("cleaverRemoveBackgroundMesh") == "true")
+    self.ui.cleaverPaddingPercentSpinBox.value = int(self._parameterNode.GetParameter("cleaverPaddingPercent"))
     self.ui.customShapeworksPathSelector.setCurrentPath(self._parameterNode.GetParameter("customShapeworksPath"))
 
     # Update buttons states and tooltips
@@ -257,12 +257,12 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode.SetParameter("keepTemporaryFiles", "true" if self.ui.keepTemporaryFilesCheckBox.checked else "false")
 
     #Cleaver parameters
-    # self._parameterNode.SetParameter("cleaverFeatureScalingParameter", str(self.ui.cleaverFeatureScalingParameterWidget.value))
-    # self._parameterNode.SetParameter("cleaverSamplingParameter", str(self.ui.cleaverSamplingParameterWidget.value))
-    # self._parameterNode.SetParameter("cleaverRateParameter", str(self.ui.cleaverRateParameterWidget.value))
-    # self._parameterNode.SetParameter("cleaverAdditionalParameters", self.ui.cleaverAdditionalParametersWidget.text)
-    # self._parameterNode.SetParameter("cleaverRemoveBackgroundMesh", "true" if self.ui.cleaverRemoveBackgroundMeshCheckBox.checked else "false")
-    # self._parameterNode.SetParameter("cleaverPaddingPercent", str(self.ui.cleaverPaddingPercentSpinBox.value))
+    self._parameterNode.SetParameter("cleaverFeatureScalingParameter", str(self.ui.cleaverFeatureScalingParameterWidget.value))
+    self._parameterNode.SetParameter("cleaverSamplingParameter", str(self.ui.cleaverSamplingParameterWidget.value))
+    self._parameterNode.SetParameter("cleaverRateParameter", str(self.ui.cleaverRateParameterWidget.value))
+    self._parameterNode.SetParameter("cleaverAdditionalParameters", self.ui.cleaverAdditionalParametersWidget.text)
+    self._parameterNode.SetParameter("cleaverRemoveBackgroundMesh", "true" if self.ui.cleaverRemoveBackgroundMeshCheckBox.checked else "false")
+    self._parameterNode.SetParameter("cleaverPaddingPercent", str(self.ui.cleaverPaddingPercentSpinBox.value))
     self._parameterNode.SetParameter("customShapeworksPath", self.ui.customShapeworksPathSelector.currentPath)
 
     self._parameterNode.EndModify(wasModified)
@@ -397,10 +397,10 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
       for index in segmentIndexes:
         segments.append(self.ui.segmentSelectorCombBox.itemText(index.row()))
 
-      # self.logic.createMeshFromSegmentationCleaver(self.ui.inputSegmentationSelector.currentNode(),
-      #   self.ui.outputModelSelector.currentNode(), segments, self.ui.cleaverAdditionalParametersWidget.text,
-      #   self.ui.cleaverRemoveBackgroundMeshCheckBox.isChecked(),
-      #   self.ui.cleaverPaddingPercentSpinBox.value * 0.01, self.ui.cleaverFeatureScalingParameterWidget.value, self.ui.cleaverSamplingParameterWidget.value, self.ui.cleaverRateParameterWidget.value)
+      self.logic.createMeshFromSegmentationCleaver(self.ui.inputSegmentationSelector.currentNode(),
+        self.ui.outputModelSelector.currentNode(), segments, self.ui.cleaverAdditionalParametersWidget.text,
+        self.ui.cleaverRemoveBackgroundMeshCheckBox.isChecked(),
+        self.ui.cleaverPaddingPercentSpinBox.value * 0.01, self.ui.cleaverFeatureScalingParameterWidget.value, self.ui.cleaverSamplingParameterWidget.value, self.ui.cleaverRateParameterWidget.value)
 
     except Exception as e:
       print(e)
@@ -466,12 +466,12 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     self.setParameterIfNotDefined(parameterNode, "showDetailedLogDuringExecution", "false")
     self.setParameterIfNotDefined(parameterNode, "keepTemporaryFiles", "false")
 
-    # self.setParameterIfNotDefined(parameterNode, "cleaverFeatureScalingParameter", "2.0")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverSamplingParameter", "0.2")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverRateParameter", "0.2")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverAdditionalParameters", "")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverRemoveBackgroundMesh", "true")
-    # self.setParameterIfNotDefined(parameterNode, "cleaverPaddingPercent", "10")
+    self.setParameterIfNotDefined(parameterNode, "cleaverFeatureScalingParameter", "2.0")
+    self.setParameterIfNotDefined(parameterNode, "cleaverSamplingParameter", "0.2")
+    self.setParameterIfNotDefined(parameterNode, "cleaverRateParameter", "0.2")
+    self.setParameterIfNotDefined(parameterNode, "cleaverAdditionalParameters", "")
+    self.setParameterIfNotDefined(parameterNode, "cleaverRemoveBackgroundMesh", "true")
+    self.setParameterIfNotDefined(parameterNode, "cleaverPaddingPercent", "10")
     self.setParameterIfNotDefined(parameterNode, "customShapeworksPath", "")
 
   def setParameterIfNotDefined(self, parameterNode, key, value):
@@ -574,21 +574,177 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     qt.QDir().mkpath(dirPath)
     return dirPath
 
-  def runImpl(self, segments = []):
+  def createMeshFromSegmentationCleaver(self, inputSegmentation, outputMeshNode, segments = [], additionalParameters = None, removeBackgroundMesh = False,
+    paddingRatio = 0.10, featureScale = 2, samplingRate=0.2, rateOfChange=0.2):
+
+    if additionalParameters is None:
+      additionalParameters=""
+
 
     self.abortRequested = False
+    tempDir = self.createTempDirectory()
+    self.addLog('Shapeworks is started in working directory: '+tempDir)
 
-    self.addLog('Shapeworks is started in working directory: ' + shapeworksTempDir)
+    inputParamsCleaver = []
 
+    # Write inputs
+    qt.QDir().mkpath(tempDir)
+
+    # Create temporary labelmap node. It will be used both for storing reference geometry
+    # and resulting merged labelmap.
+    labelmapVolumeNode = slicer.mrmlScene.AddNewNodeByClass('vtkMRMLLabelMapVolumeNode')
+    if False:
+      parentTransformNode  = inputSegmentation.GetParentTransformNode()
+      labelmapVolumeNode.SetAndObserveTransformNodeID(parentTransformNode.GetID() if parentTransformNode else None)
+
+      # Create binary labelmap representation using default parameters
+      if not inputSegmentation.GetSegmentation().CreateRepresentation(slicer.vtkSegmentationConverter.GetSegmentationBinaryLabelmapRepresentationName()):
+        self.addLog('Failed to create binary labelmap representation')
+        return
+
+      # Set reference geometry in labelmapVolumeNode
+      referenceGeometry_Segmentation = slicer.vtkOrientedImageData()
+      inputSegmentation.GetSegmentation().SetImageGeometryFromCommonLabelmapGeometry(referenceGeometry_Segmentation, None,
+        slicer.vtkSegmentation.EXTENT_REFERENCE_GEOMETRY)
+      slicer.modules.segmentations.logic().CopyOrientedImageDataToVolumeNode(referenceGeometry_Segmentation, labelmapVolumeNode)
+
+      # Add margin
+      extent = labelmapVolumeNode.GetImageData().GetExtent()
+      paddedExtent = [0, -1, 0, -1, 0, -1]
+      for axisIndex in range(3):
+        paddingSizeVoxels = int((extent[axisIndex * 2 + 1] - extent[axisIndex * 2]) * paddingRatio)
+        paddedExtent[axisIndex * 2] = extent[axisIndex * 2] - paddingSizeVoxels
+        paddedExtent[axisIndex * 2 + 1] = extent[axisIndex * 2 + 1] + paddingSizeVoxels
+      labelmapVolumeNode.GetImageData().SetExtent(paddedExtent)
+      labelmapVolumeNode.ShiftImageDataExtentToZeroStart()
+
+      # Get merged labelmap
+      segmentIdList = vtk.vtkStringArray()
+
+      for segment in segments:
+        segmentIdList.InsertNextValue(segment)
+
+      if segmentIdList.GetNumberOfValues() == 0:
+        self.addLog("No input segments are selected, therefore no output is generated.")
+        return
+
+      slicer.modules.segmentations.logic().ExportSegmentsToLabelmapNode(inputSegmentation, segmentIdList, labelmapVolumeNode, labelmapVolumeNode)
+
+      inputLabelmapVolumeFilePath = os.path.join(tempDir, "inputLabelmap.nrrd")
+      slicer.util.saveNode(labelmapVolumeNode, inputLabelmapVolumeFilePath, {"useCompression": False})
+      inputParamsCleaver.extend(["--input_files", inputLabelmapVolumeFilePath])
+
+      # Keep IJK to RAS matrix, we'll need it later
+      unscaledIjkToRasMatrix = vtk.vtkMatrix4x4()
+      labelmapVolumeNode.GetIJKToRASDirectionMatrix(unscaledIjkToRasMatrix)  # axis directions, without scaling by spacing
+      ijkToRasMatrix = vtk.vtkMatrix4x4()
+      labelmapVolumeNode.GetIJKToRASMatrix(ijkToRasMatrix)
+      origin = ijkToRasMatrix.MultiplyPoint([-0.5, -0.5, -0.5, 1.0])  # Cleaver uses the voxel corner as its origin, therefore we need a half-voxel offset
+      for i in range(3):
+        unscaledIjkToRasMatrix.SetElement(i,3, origin[i])
+
+      # Keep color node, we'll need it later
+      colorTableNode = labelmapVolumeNode.GetDisplayNode().GetColorNode()
+      # Background color is transparent by default which is not ideal for 3D display
+      colorTableNode.SetColor(0,0.6,0.6,0.6,1.0)
+
+      slicer.mrmlScene.RemoveNode(labelmapVolumeNode)
+      slicer.mrmlScene.RemoveNode(colorTableNode)
+
+    #User set parameters
+    inputParamsCleaver.extend(["--feature_scaling", "{:.2f}".format(featureScale)])
+    inputParamsCleaver.extend(["--sampling_rate", "{:.2f}".format(samplingRate)])
+    inputParamsCleaver.extend(["--lipschitz", "{:.2f}".format(rateOfChange)])
+
+    # Set up output format
+
+    inputParamsCleaver.extend(["--output_path", tempDir+"/"])
+    inputParamsCleaver.extend(["--output_format", "vtkUSG"]) # VTK unstructed grid
+    inputParamsCleaver.append("--fix_tet_windup") # prevent inside-out tets
+    inputParamsCleaver.append("--strip_exterior") # remove temporary elements that are added to make the volume cubic
+
+    inputParamsCleaver.append("--verbose")
+
+    # Quality
+    if additionalParameters:
+      inputParamsCleaver.extend(additionalParameters.split(' '))
+
+    # Run Cleaver
     ep = self.runShapeworks(inputParamsCleaver, self.getShapeworksPath())
     self.logProcessOutput(ep, self.shapeworksFilename)
+
+    # Read results
+    if not self.abortRequested:
+      outputVolumetricMeshPath = os.path.join(tempDir, "output.vtk")
+      outputReader = vtk.vtkUnstructuredGridReader()
+      outputReader.SetFileName(outputVolumetricMeshPath)
+      outputReader.ReadAllScalarsOn()
+      outputReader.ReadAllVectorsOn()
+      outputReader.ReadAllNormalsOn()
+      outputReader.ReadAllTensorsOn()
+      outputReader.ReadAllColorScalarsOn()
+      outputReader.ReadAllTCoordsOn()
+      outputReader.ReadAllFieldsOn()
+      outputReader.Update()
+
+      # Cleaver returns the mesh in voxel coordinates, need to transform to RAS space
+      transformer = vtk.vtkTransformFilter()
+      transformer.SetInputData(outputReader.GetOutput())
+      ijkToRasTransform = vtk.vtkTransform()
+      ijkToRasTransform.SetMatrix(unscaledIjkToRasMatrix)
+      transformer.SetTransform(ijkToRasTransform)
+
+      if removeBackgroundMesh:
+        transformer.Update()
+        mesh = transformer.GetOutput()
+        cellData = mesh.GetCellData()
+        cellData.SetActiveScalars("labels")
+        backgroundMeshRemover = vtk.vtkThreshold()
+        backgroundMeshRemover.SetInputData(mesh)
+        backgroundMeshRemover.SetInputArrayToProcess(0, 0, 0, vtk.vtkDataObject.FIELD_ASSOCIATION_CELLS, vtk.vtkDataSetAttributes.SCALARS)
+        backgroundMeshRemover.SetLowerThreshold(1)
+        outputMeshNode.SetUnstructuredGridConnection(backgroundMeshRemover.GetOutputPort())
+      else:
+        outputMeshNode.SetUnstructuredGridConnection(transformer.GetOutputPort())
+
+      outputMeshDisplayNode = outputMeshNode.GetDisplayNode()
+      if not outputMeshDisplayNode:
+        # Initial setup of display node
+        outputMeshNode.CreateDefaultDisplayNodes()
+
+        outputMeshDisplayNode = outputMeshNode.GetDisplayNode()
+        outputMeshDisplayNode.SetEdgeVisibility(True)
+        outputMeshDisplayNode.SetClipping(True)
+
+        colorTableNode = slicer.mrmlScene.AddNode(colorTableNode)
+        outputMeshDisplayNode.SetAndObserveColorNodeID(colorTableNode.GetID())
+
+        outputMeshDisplayNode.ScalarVisibilityOn()
+        outputMeshDisplayNode.SetActiveScalarName('labels')
+        outputMeshDisplayNode.SetActiveAttributeLocation(vtk.vtkAssignAttribute.CELL_DATA)
+        outputMeshDisplayNode.SetSliceIntersectionVisibility(True)
+        outputMeshDisplayNode.SetSliceIntersectionOpacity(0.5)
+        outputMeshDisplayNode.SetScalarRangeFlag(slicer.vtkMRMLDisplayNode.UseColorNodeScalarRange)
+      else:
+        currentColorNode = outputMeshDisplayNode.GetColorNode()
+        if currentColorNode is not None and currentColorNode.GetType() == currentColorNode.User and currentColorNode.IsA("vtkMRMLColorTableNode"):
+          # current color table node can be overwritten
+          currentColorNode.Copy(colorTableNode)
+        else:
+          colorTableNode = slicer.mrmlScene.AddNode(colorTableNode)
+          outputMeshDisplayNode.SetAndObserveColorNodeID(colorTableNode.GetID())
+
+      # Flip clipping setting twice, this workaround forces update of the display pipeline
+      # when switching between surface and volumetric mesh
+      outputMeshDisplayNode.SetClipping(not outputMeshDisplayNode.GetClipping())
+      outputMeshDisplayNode.SetClipping(not outputMeshDisplayNode.GetClipping())
 
     # Clean up
     if self.deleteTemporaryFiles:
       import shutil
       shutil.rmtree(tempDir)
 
-    self.addLog("Shapeworks processing is complete.")
+    self.addLog("Model generation is completed")
 
 class ShapeworksRunnerTest(ScriptedLoadableModuleTest):
   """
@@ -622,8 +778,31 @@ class ShapeworksRunnerTest(ScriptedLoadableModuleTest):
 
     self.delayDisplay("Starting the test")
 
+    cylinder = vtk.vtkCylinderSource()
+    cylinder.SetRadius(10)
+    cylinder.SetHeight(40)
+    cylinder.Update()
+    inputModelNode = slicer.modules.models.logic().AddModel(cylinder.GetOutput())
+
+    outputModelNode = slicer.mrmlScene.AddNewNodeByClass("vtkMRMLModelNode")
+    outputModelNode.CreateDefaultDisplayNodes()
+
     logic = ShapeworksRunnerLogic()
     self.assertTrue(0)
+    #logic.createMeshFromPolyDataTODO(inputModelNode.GetPolyData(), outputModelNode, '', 100, 0, 100)
+
+    self.assertTrue(outputModelNode.GetMesh().GetNumberOfPoints()>0)
+    self.assertTrue(outputModelNode.GetMesh().GetNumberOfCells()>0)
+
+    inputModelNode.GetDisplayNode().SetOpacity(0.2)
+
+    outputDisplayNode = outputModelNode.GetDisplayNode()
+    outputDisplayNode.SetColor(1,0,0)
+    outputDisplayNode.SetEdgeVisibility(True)
+    outputDisplayNode.SetClipping(True)
+
+    clipNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLClipModelsNode")
+    clipNode.SetRedSliceClipState(clipNode.ClipNegativeSpace)
 
     self.delayDisplay('Test passed!')
 
