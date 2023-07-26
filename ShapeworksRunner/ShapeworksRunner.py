@@ -335,16 +335,15 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     return jsonProject
 
   def generateShapeworksProjectJson(self, toggle):
-    print("generateShapeworksProjectJson {0}".format(toggle))
-    self.addLog("generateShapeworksProjectJson {0}".format(toggle))
     tempDir = self.logic.createTempDirectory()
     print("Listing things to save:")
     inputFiles = []
     for k,v in slicer.util.getNodes().items():
       if v.GetTypeDisplayName() == "Segmentation":
         print("TO SAVE: ", k)
-        inputFiles.append((k, "dummy.nrrd"))
-        #slicer.util.saveNode(k, labelmapVolumeFilePath, {"useCompression": False})
+        segFile = os.path.join(tempDir, k + ".nrrd")
+        inputFiles.append((k, segFile))
+        slicer.util.saveNode(v, segFile, {"useCompression": False})
     print("Done.")
     print(inputFiles)
     jProj = json.dumps(self.buildProjectJson(inputFiles))
