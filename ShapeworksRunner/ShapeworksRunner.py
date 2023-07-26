@@ -100,7 +100,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
     self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
 
-
     self.ui.showDetailedLogDuringExecutionCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
 
@@ -312,10 +311,10 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     print("Done.")
     print(inputFiles)
     jProj = json.dumps(self.buildProjectJson(inputFiles))
-    outputFileName = os.path.join(self.shapeworksTempDir, "shapeworksProject.swproj")
-    with open(outputFileName, "w") as outfile:
+    self.logic.projectFileName = os.path.join(self.shapeworksTempDir, "shapeworksProject.swproj")
+    with open(self.logic.projectFileName, "w") as outfile:
         outfile.write(jProj)
-        print("Wrote: ", outputFileName)
+        print("Wrote: ", self.logic.projectFileName)
     print(jProj)
 
   def runShapeworksCommand(self, inputParams, name):
@@ -328,10 +327,14 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def groomShapeworksProject(self):
     inputParams = ["groom", "--name={0}".format(self.logic.projectFileName), "--progress"]
     self.runShapeworksCommand(inputParams, inputParams[0])
+    print("Groomed files:")
+    print(os.listdir(os.path.join(self.shapeworksTempDir, "groomed")))
 
   def optimizeShapeworksProject(self):
     inputParams = ["optimize", "--name={0}".format(self.logic.projectFileName)]
     self.runShapeworksCommand(inputParams, inputParams[0])
+    print("Optimized files:")
+    print(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
 
   def loadResultsOfShapeworksProject(self, toggle):
     print("loadResultsOfShapeworksProject")
@@ -400,7 +403,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     import os
     self.scriptPath = os.path.dirname(os.path.abspath(__file__))
     self.shapeworksPath = "/Applications/ShapeWorks/bin/shapeworks" # this will be determined dynamically
-    self.projectFileName = "/Users/DanSCI/dev/swEx/Studio/Ellipsoid/ellipsoidJsonTest.swproj" # DANTODO: generate
+    self.projectFileName = ""
 
     import platform
     executableExt = '.exe' if platform.system() == 'Windows' else ''
