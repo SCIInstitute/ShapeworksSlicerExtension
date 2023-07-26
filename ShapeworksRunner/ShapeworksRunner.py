@@ -5,6 +5,7 @@ import vtk, qt, ctk, slicer
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 import logging
+import json
 
 #
 # ShapeworksRunner
@@ -317,14 +318,41 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def onKeepTemporaryFilesToggled(self, toggle):
     self.logic.deleteTemporaryFiles = toggle
 
+  def buildProjectJsonInputData(self, inputFiles):
+    return [{  "name": name, "shape_file": filename} for name,filename in inputFiles]
+
+  def buildProjectJson(self, inputFiles):
+    jsonProject = {
+        "data": self.buildProjectJsonInputData(inputFiles),
+        "groom": {
+            "": {},
+            "file": {}
+        },
+        "optimize": {
+          "verbosity": "1"
+        }
+      }
+    return jsonProject
+
   def generateShapeworksProjectJson(self, toggle):
     print("generateShapeworksProjectJson {0}".format(toggle))
     self.addLog("generateShapeworksProjectJson {0}".format(toggle))
+    tempDir = self.logic.createTempDirectory()
     print("Listing things to save:")
+    inputFiles = []
     for k,v in slicer.util.getNodes().items():
       if v.GetTypeDisplayName() == "Segmentation":
         print("TO SAVE: ", k)
+        inputFiles.append((k, "dummy.nrrd"))
+        #slicer.util.saveNode(k, labelmapVolumeFilePath, {"useCompression": False})
     print("Done.")
+    print(inputFiles)
+    jProj = json.dumps(self.buildProjectJson(inputFiles))
+    outputFileName = os.path.join(tempDir, "shapeworksProject.swproj")
+    with open(outputFileName, "w") as outfile:
+        outfile.write(jProj)
+        print("Wrote: ", outputFileName)
+    print(jProj)
 
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.logic.shapeworksPath, repr(inputParams))
