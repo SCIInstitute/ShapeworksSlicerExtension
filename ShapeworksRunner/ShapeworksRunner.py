@@ -283,7 +283,9 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.logic.deleteTemporaryFiles = toggle
 
   def generateProjectClicked(self):
-    self.logic.generateShapeworksProjectJson()
+    print("generateProjectClicked")
+    print(self.ui.inputSegmentationSelector.checkedNodes())
+    self.logic.generateShapeworksProjectJson(lambda s : s in [n.GetName() for n in self.ui.inputSegmentationSelector.checkedNodes()])
 
   def groomClicked(self):
     self.logic.groomShapeworksProject()
@@ -444,23 +446,27 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
       }
     return jsonProject
 
-  def generateShapeworksProjectJson(self):
+  def generateShapeworksProjectJson(self, selected):
     print("Listing things to save:")
     inputFiles = []
     for k,v in slicer.util.getNodes().items():
       if v.GetTypeDisplayName() == "Segmentation":
-        print("TO SAVE: ", k)
-        segFile = os.path.join(self.shapeworksTempDir, k + ".nrrd")
-        inputFiles.append((k, segFile))
-        slicer.util.saveNode(v, segFile, {"useCompression": False})
+        print("check if selected: ", k)
+        if (selected(k)):
+          print("\tselected--TO SAVE: ", k)
+          segFile = os.path.join(self.shapeworksTempDir, k + ".nrrd")
+          inputFiles.append((k, segFile))
+          slicer.util.saveNode(v, segFile, {"useCompression": False})
     print("Done.")
     print(inputFiles)
-    jProj = json.dumps(self.buildProjectJson(inputFiles))
+    self.saveJsonProject(json.dumps(self.buildProjectJson(inputFiles)))
+    #print(jProj)
+
+  def saveJsonProject(self, jProj):
     self.projectFileName = os.path.join(self.shapeworksTempDir, "shapeworksProject.swproj")
     with open(self.projectFileName, "w") as outfile:
-        outfile.write(jProj)
-        print("Wrote: ", self.projectFileName)
-    print(jProj)
+      outfile.write(jProj)
+    print("Wrote: ", self.projectFileName)
 
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, repr(inputParams))
@@ -589,6 +595,10 @@ class ShapeworksRunnerTest(ScriptedLoadableModuleTest):
     self.delayDisplay("Starting the test")
 
     logic = ShapeworksRunnerLogic()
-    self.assertTrue(0)
+
+    logic.generateShapeworksProjectJson(lambda s : True)
+
+
+    #self.assertTrue(False)
 
     self.delayDisplay('Test passed!')
