@@ -53,7 +53,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.logic = ShapeworksRunnerLogic()
     self.logic.logCallback = self.addLog
     self.modelGenerationInProgress = False
-    self.shapeworksTempDir = self.logic.createTempDirectory()
 
     uiWidget = slicer.util.loadUI(self.resourcePath('UI/ShapeworksRunner.ui'))
     self.layout.addWidget(uiWidget)
@@ -90,10 +89,10 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.onKeepTemporaryFilesToggled)
 
     # Shapeworks steps
-    self.ui.generateProjectPushButton_.connect("clicked(bool)", self.generateShapeworksProjectJson)
-    self.ui.groomPushButton_.connect("clicked(bool)", self.groomShapeworksProject)
-    self.ui.optimizePushButton_.connect("clicked(bool)", self.optimizeShapeworksProject)
-    self.ui.loadResultsPushButton_.connect("clicked(bool)", self.loadResultsOfShapeworksProject)
+    self.ui.generateProjectPushButton_.connect("clicked(bool)", self.generateProjectClicked)
+    self.ui.groomPushButton_.connect("clicked(bool)", self.groomClicked)
+    self.ui.optimizePushButton_.connect("clicked(bool)", self.optimizeClicked)
+    self.ui.loadResultsPushButton_.connect("clicked(bool)", self.loadResultsClicked)
 
     #Parameter node connections
     self.ui.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
@@ -283,62 +282,17 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def onKeepTemporaryFilesToggled(self, toggle):
     self.logic.deleteTemporaryFiles = toggle
 
-  def buildProjectJsonInputData(self, inputFiles):
-    return [{  "name": name, "shape_file": filename} for name,filename in inputFiles]
+  def generateProjectClicked(self):
+    self.logic.generateShapeworksProjectJson()
 
-  def buildProjectJson(self, inputFiles):
-    jsonProject = {
-        "data": self.buildProjectJsonInputData(inputFiles),
-        "groom": {
-            "": {},
-            "file": {}
-        },
-        "optimize": {
-          "verbosity": "1"
-        }
-      }
-    return jsonProject
+  def groomClicked(self):
+    self.logic.groomShapeworksProject()
 
-  def generateShapeworksProjectJson(self, toggle):
-    print("Listing things to save:")
-    inputFiles = []
-    for k,v in slicer.util.getNodes().items():
-      if v.GetTypeDisplayName() == "Segmentation":
-        print("TO SAVE: ", k)
-        segFile = os.path.join(self.shapeworksTempDir, k + ".nrrd")
-        inputFiles.append((k, segFile))
-        slicer.util.saveNode(v, segFile, {"useCompression": False})
-    print("Done.")
-    print(inputFiles)
-    jProj = json.dumps(self.buildProjectJson(inputFiles))
-    self.logic.projectFileName = os.path.join(self.shapeworksTempDir, "shapeworksProject.swproj")
-    with open(self.logic.projectFileName, "w") as outfile:
-        outfile.write(jProj)
-        print("Wrote: ", self.logic.projectFileName)
-    print(jProj)
+  def optimizeClicked(self):
+    self.logic.optimizeShapeworksProject()
 
-  def runShapeworksCommand(self, inputParams, name):
-    swCmd = "{0}: {1} {2}".format(name, self.logic.shapeworksPath, repr(inputParams))
-    print(swCmd)
-    self.addLog(swCmd)
-    ep = self.logic.runShapeworks(inputParams, self.logic.getShapeworksPath())
-    self.logic.logProcessOutput(ep, self.logic.shapeworksFilename)
-
-  def groomShapeworksProject(self):
-    inputParams = ["groom", "--name={0}".format(self.logic.projectFileName), "--progress"]
-    self.runShapeworksCommand(inputParams, inputParams[0])
-    print("Groomed files:")
-    print(os.listdir(os.path.join(self.shapeworksTempDir, "groomed")))
-
-  def optimizeShapeworksProject(self):
-    inputParams = ["optimize", "--name={0}".format(self.logic.projectFileName)]
-    self.runShapeworksCommand(inputParams, inputParams[0])
-    print("Optimized files:")
-    print(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
-
-  def loadResultsOfShapeworksProject(self, toggle):
-    print("loadResultsOfShapeworksProject")
-    self.addLog("loadResultsOfShapeworksProject")
+  def loadResultsClicked(self):
+    self.logic.loadResultsOfShapeworksProject()
 
   def onApplyButton(self):
     if self.modelGenerationInProgress:
@@ -404,6 +358,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     self.scriptPath = os.path.dirname(os.path.abspath(__file__))
     self.shapeworksPath = "/Applications/ShapeWorks/bin/shapeworks" # this will be determined dynamically
     self.projectFileName = ""
+    self.shapeworksTempDir = self.createTempDirectory()
 
     import platform
     executableExt = '.exe' if platform.system() == 'Windows' else ''
@@ -472,6 +427,63 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     settings.setValue(self.customShapeworksPathSettingsKey, customPath)
     self.shapeworksPath = None
     self.getShapeworksPath()
+
+  def buildProjectJsonInputData(self, inputFiles):
+    return [{  "name": name, "shape_file": filename} for name,filename in inputFiles]
+
+  def buildProjectJson(self, inputFiles):
+    jsonProject = {
+        "data": self.buildProjectJsonInputData(inputFiles),
+        "groom": {
+            "": {},
+            "file": {}
+        },
+        "optimize": {
+          "verbosity": "1"
+        }
+      }
+    return jsonProject
+
+  def generateShapeworksProjectJson(self):
+    print("Listing things to save:")
+    inputFiles = []
+    for k,v in slicer.util.getNodes().items():
+      if v.GetTypeDisplayName() == "Segmentation":
+        print("TO SAVE: ", k)
+        segFile = os.path.join(self.shapeworksTempDir, k + ".nrrd")
+        inputFiles.append((k, segFile))
+        slicer.util.saveNode(v, segFile, {"useCompression": False})
+    print("Done.")
+    print(inputFiles)
+    jProj = json.dumps(self.buildProjectJson(inputFiles))
+    self.projectFileName = os.path.join(self.shapeworksTempDir, "shapeworksProject.swproj")
+    with open(self.projectFileName, "w") as outfile:
+        outfile.write(jProj)
+        print("Wrote: ", self.projectFileName)
+    print(jProj)
+
+  def runShapeworksCommand(self, inputParams, name):
+    swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, repr(inputParams))
+    print(swCmd)
+    self.addLog(swCmd)
+    ep = self.runShapeworks(inputParams, self.getShapeworksPath())
+    self.logProcessOutput(ep, self.shapeworksFilename)
+
+  def groomShapeworksProject(self):
+    inputParams = ["groom", "--name={0}".format(self.projectFileName), "--progress"]
+    self.runShapeworksCommand(inputParams, inputParams[0])
+    print("Groomed files:")
+    print(os.listdir(os.path.join(self.shapeworksTempDir, "groomed")))
+
+  def optimizeShapeworksProject(self):
+    inputParams = ["optimize", "--name={0}".format(self.projectFileName)]
+    self.runShapeworksCommand(inputParams, inputParams[0])
+    print("Optimized files:")
+    print(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
+
+  def loadResultsOfShapeworksProject(self):
+    print("loadResultsOfShapeworksProject")
+    self.addLog("loadResultsOfShapeworksProject")
 
   def runShapeworks(self, cmdLineArguments, executableFilePath):
     self.addLog("Running Shapeworks...")
