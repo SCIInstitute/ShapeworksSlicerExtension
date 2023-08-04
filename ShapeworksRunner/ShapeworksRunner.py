@@ -283,8 +283,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.logic.deleteTemporaryFiles = toggle
 
   def generateProjectClicked(self):
-    print("generateProjectClicked")
-    print(self.ui.inputSegmentationSelector.checkedNodes())
     self.logic.generateShapeworksProjectJson(lambda s : s in [n.GetName() for n in self.ui.inputSegmentationSelector.checkedNodes()])
 
   def groomClicked(self):
@@ -596,7 +594,9 @@ class ShapeworksRunnerTest(ScriptedLoadableModuleTest):
 
     logic = ShapeworksRunnerLogic()
 
-    logic.generateShapeworksProjectJson(lambda s : True)
+    jsonTest = logic.buildProjectJson([])
+    self.assertEqual(jsonTest, "{'data': [], 'groom': {'': {}, 'file': {}}, 'optimize': {'verbosity': '1'}}")
+    #logic.generateShapeworksProjectJson(lambda s : True)
 
 
     #self.assertTrue(False)
