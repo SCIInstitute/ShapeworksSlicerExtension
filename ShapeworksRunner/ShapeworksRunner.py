@@ -450,7 +450,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     print("Listing things to save:")
     inputFiles = []
     for k,v in slicer.util.getNodes().items():
-      if v.GetTypeDisplayName() == "Segmentation":
+      if v.GetTypeDisplayName() == "Segmentation" or v.GetTypeDisplayName() == "Model": # TODO: need input widget for these first.
         print("check if selected: ", k)
         if (selected(k)):
           print("\tselected--TO SAVE: ", k)
@@ -488,8 +488,8 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     print(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
 
   def loadResultsOfShapeworksProject(self):
+    print("This requires Shapeworks 6.5+")
     print("loadResultsOfShapeworksProject")
-    self.addLog("loadResultsOfShapeworksProject")
     dir = os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")
     filesToRead = [file for file in os.listdir(dir) if file.endswith("_world.vtk")]
     print(filesToRead)
@@ -499,14 +499,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
       reader.ReadAllVectorsOn()
       reader.ReadAllScalarsOn()
       reader.Update()
-
       data = reader.GetOutput()
-
-      #vtk_points = vtk.vtkPoints()
-      #vtk_points.SetData(data)
-      # Create the vtkPolyData object.
-      #polydata = vtk.vtkPolyData()
-      #polydata.SetPoints(data)
       # Create the vtkSphereSource object.
       sphere = vtk.vtkSphereSource()
       sphere.SetRadius(2.0)
@@ -515,6 +508,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
       glyph.SetInputData(data)
       glyph.SetSourceConnection(sphere.GetOutputPort())
       pointCloudModelNode = slicer.modules.models.logic().AddModel(glyph.GetOutputPort())
+      #pointCloudModelNode -- set name to match segment
 
   def runShapeworks(self, cmdLineArguments, executableFilePath):
     self.addLog("Running Shapeworks...")
