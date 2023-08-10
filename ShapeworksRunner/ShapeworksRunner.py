@@ -2,6 +2,7 @@ from __future__ import print_function
 import os
 import unittest
 import vtk, qt, ctk, slicer
+from vtk import vtkStructuredPointsReader
 from slicer.ScriptedLoadableModule import *
 from slicer.util import VTKObservationMixin
 import logging
@@ -439,7 +440,8 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
             "file": {}
         },
         "optimize": {
-          "verbosity": "1"
+          "verbosity": "1",
+          "particle_format": "vtk"
         }
       }
     return jsonProject
@@ -488,6 +490,31 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def loadResultsOfShapeworksProject(self):
     print("loadResultsOfShapeworksProject")
     self.addLog("loadResultsOfShapeworksProject")
+    dir = os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")
+    filesToRead = [file for file in os.listdir(dir) if file.endswith("_world.vtk")]
+    print(filesToRead)
+    for vtkPointFile in filesToRead:
+      reader = vtk.vtkPolyDataReader()
+      reader.SetFileName(os.path.join(dir, vtkPointFile))
+      reader.ReadAllVectorsOn()
+      reader.ReadAllScalarsOn()
+      reader.Update()
+
+      data = reader.GetOutput()
+
+      #vtk_points = vtk.vtkPoints()
+      #vtk_points.SetData(data)
+      # Create the vtkPolyData object.
+      #polydata = vtk.vtkPolyData()
+      #polydata.SetPoints(data)
+      # Create the vtkSphereSource object.
+      sphere = vtk.vtkSphereSource()
+      sphere.SetRadius(2.0)
+      # Create the vtkGlyph3D object.
+      glyph = vtk.vtkGlyph3D()
+      glyph.SetInputData(data)
+      glyph.SetSourceConnection(sphere.GetOutputPort())
+      pointCloudModelNode = slicer.modules.models.logic().AddModel(glyph.GetOutputPort())
 
   def runShapeworks(self, cmdLineArguments, executableFilePath):
     self.addLog("Running Shapeworks...")
