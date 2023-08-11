@@ -248,8 +248,6 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self._parameterNode.EndModify(wasModified)
 
   def updateMRMLFromGUI(self):
-
-    print("\nupdateMRMLFromGUI")
     #Enable correct input selections
     inputIsModel = False
     self.ui.inputSegmentationLabel.visible = not inputIsModel
@@ -260,19 +258,18 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.inputModelSelector.visible = inputIsModel
     self.ui.segmentSelectorCombBox.enabled = self.ui.inputSegmentationSelector.currentNode() is not None
 
-    print("clearing segmentSelectorCombBox")
     self.ui.segmentSelectorCombBox.clear()
 
     #populate segments
     for inputSeg in self.ui.inputSegmentationSelector.checkedNodes():
-      print(inputSeg.GetName())
+      #print(inputSeg.GetName())
 
       if inputSeg is not None:
         segmentIDs = vtk.vtkStringArray()
         inputSeg.GetSegmentation().GetSegmentIDs(segmentIDs)
-        print(segmentIDs.GetNumberOfValues())
+        #print(segmentIDs.GetNumberOfValues())
         for index in range(0, segmentIDs.GetNumberOfValues()):
-          print(segmentIDs.GetValue(index))
+          #print(segmentIDs.GetValue(index))
           self.ui.segmentSelectorCombBox.addItem("{0}: {1}".format(inputSeg.GetName(), segmentIDs.GetValue(index)))
 
     self.updateParameterNodeFromGUI()
@@ -415,7 +412,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def getCustomShapeworksPath(self):
     settings = qt.QSettings()
     if settings.contains(self.customShapeworksPathSettingsKey):
-      self.addLog("getCustomShapeworksPath: " + settings.value(self.customShapeworksPathSettingsKey))
+      #self.addLog("getCustomShapeworksPath: " + settings.value(self.customShapeworksPathSettingsKey))
       return settings.value(self.customShapeworksPathSettingsKey)
     return ''
 
@@ -447,20 +444,14 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     return jsonProject
 
   def generateShapeworksProjectJson(self, selected):
-    print("Listing things to save:")
     inputFiles = []
     for k,v in slicer.util.getNodes().items():
       if v.GetTypeDisplayName() == "Segmentation" or v.GetTypeDisplayName() == "Model": # TODO: need input widget for these first.
-        print("check if selected: ", k)
         if (selected(k)):
-          print("\tselected--TO SAVE: ", k)
           segFile = os.path.join(self.shapeworksTempDir, k + ".nrrd")
           inputFiles.append((k, segFile))
           slicer.util.saveNode(v, segFile, {"useCompression": False})
-    print("Done.")
-    print(inputFiles)
     self.saveJsonProject(json.dumps(self.buildProjectJson(inputFiles)))
-    #print(jProj)
 
   def saveJsonProject(self, jProj):
     self.projectFileName = os.path.join(self.shapeworksTempDir, "shapeworksProject.swproj")
@@ -469,9 +460,9 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     print("Wrote: ", self.projectFileName)
 
   def runShapeworksCommand(self, inputParams, name):
-    swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, repr(inputParams))
+    swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))
     print(swCmd)
-    self.addLog(swCmd)
+    #self.addLog(swCmd)
     ep = self.runShapeworks(inputParams, self.getShapeworksPath())
     self.logProcessOutput(ep, self.shapeworksFilename)
 
@@ -489,10 +480,9 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
 
   def loadResultsOfShapeworksProject(self):
     print("This requires Shapeworks 6.5+")
-    print("loadResultsOfShapeworksProject")
     dir = os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")
-    filesToRead = [file for file in os.listdir(dir) if file.endswith("_world.vtk")]
-    print(filesToRead)
+    filesToRead = [file for file in os.listdir(dir) if file.endswith("_local.vtk")] # local or world? transform?
+    print("Loading these vtk point files:\n" + repr(filesToRead))
     for vtkPointFile in filesToRead:
       reader = vtk.vtkPolyDataReader()
       reader.SetFileName(os.path.join(dir, vtkPointFile))
@@ -508,7 +498,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
       glyph.SetInputData(data)
       glyph.SetSourceConnection(sphere.GetOutputPort())
       pointCloudModelNode = slicer.modules.models.logic().AddModel(glyph.GetOutputPort())
-      #pointCloudModelNode -- set name to match segment
+      pointCloudModelNode.SetName(vtkPointFile)
 
   def runShapeworks(self, cmdLineArguments, executableFilePath):
     self.addLog("Running Shapeworks...")
