@@ -79,7 +79,7 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.EndCloseEvent, self.onSceneEndClose)
 
     # connections
-    self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
+    #self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
     self.ui.showTemporaryFilesFolderButton.connect('clicked(bool)', self.onShowTemporaryFilesFolder)
     #self.ui.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
     self.ui.inputSegmentationSelector.connect("checkedNodesChanged()", self.updateMRMLFromGUI)
@@ -90,10 +90,19 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.onKeepTemporaryFilesToggled)
 
     # Shapeworks steps
+    self.ui.launchShapeWorksPushButton_.connect("clicked(bool)", self.launchShapeWorksClicked)
     self.ui.generateProjectPushButton_.connect("clicked(bool)", self.generateProjectClicked)
     self.ui.groomPushButton_.connect("clicked(bool)", self.groomClicked)
     self.ui.optimizePushButton_.connect("clicked(bool)", self.optimizeClicked)
     self.ui.loadResultsPushButton_.connect("clicked(bool)", self.loadResultsClicked)
+    # ShapeWorks file handling
+    self.ui.loadProjectPushButton_.connect("clicked(bool)", self.loadProjectClicked)
+    self.ui.saveProjectPushButton_.connect("clicked(bool)", self.saveProjectClicked)
+    self.ui.saveGroomedPushButton_.connect("clicked(bool)", self.saveGroomClicked)
+    self.ui.saveOptimizePushButton_.connect("clicked(bool)", self.saveOptimizeClicked)
+    self.ui.saveResultsPushButton_.connect("clicked(bool)", self.saveResultsClicked)
+
+    self.ui.loadDocsButton_.connect("clicked(bool)", self.loadDocsClicked)
 
     #Parameter node connections
     self.ui.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
@@ -292,38 +301,36 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def loadResultsClicked(self):
     self.logic.loadResultsOfShapeworksProject()
 
-  def onApplyButton(self):
-    if self.modelGenerationInProgress:
-      self.modelGenerationInProgress = False
-      self.logic.abortRequested = True
-      self.ui.applyButton.text = "Cancelling..."
-      self.ui.applyButton.enabled = False
-      return
+  def launchShapeWorksClicked(self):
+    print("launchShapeWorksClicked")
+    ep = self.logic.runShapeworks([], "/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
+    #self.logic.loadResultsOfShapeworksProject()
 
-    self.modelGenerationInProgress = True
-    self.ui.applyButton.text = "Cancel"
-    self.ui.statusLabel.plainText = ''
-    slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
-    try:
-      self.logic.deleteTemporaryFiles = not self.ui.keepTemporaryFilesCheckBox.checked
-      self.logic.logStandardOutput = self.ui.showDetailedLogDuringExecutionCheckBox.checked
+  def loadProjectClicked(self):
+    print("loadProjectClicked")
+    #self.logic.loadResultsOfShapeworksProject()
 
-      #Get list of segments to process
-      segmentIndexes = self.ui.segmentSelectorCombBox.checkedIndexes()
-      segments = []
+  def saveProjectClicked(self):
+    print("saveProjectClicked")
+    #self.logic.saveProject()
 
-      for index in segmentIndexes:
-        segments.append(self.ui.segmentSelectorCombBox.itemText(index.row()))
+  def saveGroomClicked(self):
+    print("saveGroomClicked")
+    #self.logic.loadResultsOfShapeworksProject()
 
-    except Exception as e:
-      print(e)
-      self.addLog("Error: {0}".format(str(e)))
-      import traceback
-      traceback.print_exc()
-    finally:
-      slicer.app.restoreOverrideCursor()
-      self.modelGenerationInProgress = False
-      self.updateMRMLFromGUI() # restores default Apply button state
+  def saveOptimizeClicked(self):
+    print("saveOptimizeClicked")
+    #self.logic.loadResultsOfShapeworksProject()
+
+  def saveResultsClicked(self):
+    print("saveResultsClicked")
+    #self.logic.loadResultsOfShapeworksProject()
+
+  def loadDocsClicked(self):
+    print("loadDocsClicked")
+    import webbrowser
+    webbrowser.open("http://sciinstitute.github.io/ShapeWorks/latest/")
+    #self.logic.loadResultsOfShapeworksProject()
 
   def addLog(self, text):
     """Append text to log window

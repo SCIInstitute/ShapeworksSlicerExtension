@@ -10,6 +10,9 @@
     <height>863</height>
    </rect>
   </property>
+  <property name="windowTitle">
+   <string>ShapeWorks Runner</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="ctkCollapsibleButton" name="defaultinputParametersCollapsibleButton">
@@ -422,7 +425,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="applyButton">
+    <widget class="QPushButton" name="loadDocsButton_">
      <property name="enabled">
       <bool>true</bool>
      </property>
@@ -430,7 +433,7 @@
       <string>Run the algorithm.</string>
      </property>
      <property name="text">
-      <string>Apply</string>
+      <string>Load documentation</string>
      </property>
     </widget>
    </item>
