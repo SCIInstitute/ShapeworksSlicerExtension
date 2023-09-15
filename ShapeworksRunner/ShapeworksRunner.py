@@ -96,6 +96,7 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.optimizePushButton_.connect("clicked(bool)", self.optimizeClicked)
     self.ui.loadResultsPushButton_.connect("clicked(bool)", self.loadResultsClicked)
     # ShapeWorks file handling
+    self.ui.setWorkingDirectoryPushButton_.connect("clicked(bool)", self.setWorkingDirectoryClicked)
     self.ui.loadProjectPushButton_.connect("clicked(bool)", self.loadProjectClicked)
     self.ui.saveProjectPushButton_.connect("clicked(bool)", self.saveProjectClicked)
     self.ui.saveGroomedPushButton_.connect("clicked(bool)", self.saveGroomClicked)
@@ -301,19 +302,20 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def loadResultsClicked(self):
     self.logic.loadResultsOfShapeworksProject()
 
+  def setWorkingDirectoryClicked(self):
+    print("setWorkingDirectoryClicked")
+
   def launchShapeWorksClicked(self):
     print("launchShapeWorksClicked")
     inputParams = ["--name={0}".format(self.logic.projectFileName)]
     ep = self.logic.runShapeworks(inputParams, "/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
-    #self.logic.loadResultsOfShapeworksProject()
 
   def loadProjectClicked(self):
     print("loadProjectClicked")
     #self.logic.loadResultsOfShapeworksProject()
 
   def saveProjectClicked(self):
-    print("saveProjectClicked")
-    #self.logic.saveProject()
+    self.logic.saveProject()
 
   def saveGroomClicked(self):
     print("saveGroomClicked")
@@ -466,6 +468,12 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     with open(self.projectFileName, "w") as outfile:
       outfile.write(jProj)
     print("Wrote: ", self.projectFileName)
+
+  def saveProject(self):
+    file_name = qt.QFileDialog.getSaveFileName(None, "Save ShapeWorks Project File","","All Files (*);;Json Files(*.json)")
+    print("Filename to save:", file_name)
+    import shutil
+    shutil.copyfile(self.projectFileName, file_name)
 
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))

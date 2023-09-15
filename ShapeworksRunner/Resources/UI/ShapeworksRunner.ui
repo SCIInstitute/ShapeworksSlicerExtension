@@ -152,17 +152,17 @@
         <property name="bottomMargin">
          <number>5</number>
         </property>
-        <item row="5" column="0">
-         <widget class="QPushButton" name="optimizePushButton_">
+        <item row="7" column="1">
+         <widget class="QPushButton" name="saveResultsPushButton_">
           <property name="text">
-           <string>Optimize</string>
+           <string>Save result files...</string>
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QPushButton" name="groomPushButton_">
+        <item row="6" column="0">
+         <widget class="QPushButton" name="optimizePushButton_">
           <property name="text">
-           <string>Groom</string>
+           <string>Optimize</string>
           </property>
          </widget>
         </item>
@@ -173,45 +173,10 @@
           </property>
          </widget>
         </item>
-        <item row="5" column="1">
-         <widget class="QPushButton" name="saveOptimizePushButton_">
-          <property name="text">
-           <string>Save optimized files...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="0">
-         <widget class="QPushButton" name="loadResultsPushButton_">
-          <property name="text">
-           <string>Load results</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QPushButton" name="saveGroomedPushButton_">
-          <property name="text">
-           <string>Save groomed files...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="6" column="1">
-         <widget class="QPushButton" name="saveResultsPushButton_">
-          <property name="text">
-           <string>Save result files...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QPushButton" name="saveProjectPushButton_">
           <property name="text">
            <string>Save project...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QPushButton" name="generateProjectPushButton_">
-          <property name="text">
-           <string>Generate project</string>
           </property>
          </widget>
         </item>
@@ -219,6 +184,48 @@
          <widget class="QPushButton" name="loadProjectPushButton_">
           <property name="text">
            <string>Load project...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QPushButton" name="saveOptimizePushButton_">
+          <property name="text">
+           <string>Save optimized files...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QPushButton" name="saveGroomedPushButton_">
+          <property name="text">
+           <string>Save groomed files...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QPushButton" name="generateProjectPushButton_">
+          <property name="text">
+           <string>Generate project</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QPushButton" name="loadResultsPushButton_">
+          <property name="text">
+           <string>Load results</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QPushButton" name="groomPushButton_">
+          <property name="text">
+           <string>Groom</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="setWorkingDirectoryPushButton_">
+          <property name="text">
+           <string>Set working directory...</string>
           </property>
          </widget>
         </item>
