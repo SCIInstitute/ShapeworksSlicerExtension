@@ -303,7 +303,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   def launchShapeWorksClicked(self):
     print("launchShapeWorksClicked")
-    ep = self.logic.runShapeworks([], "/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
+    inputParams = ["--name={0}".format(self.logic.projectFileName)]
+    ep = self.logic.runShapeworks(inputParams, "/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
     #self.logic.loadResultsOfShapeworksProject()
 
   def loadProjectClicked(self):
