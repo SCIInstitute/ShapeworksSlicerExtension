@@ -308,7 +308,7 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def launchShapeWorksClicked(self):
     print("launchShapeWorksClicked")
     inputParams = ["--name={0}".format(self.logic.projectFileName)]
-    ep = self.logic.runShapeworks(inputParams, "/Applications/ShapeWorks/bin/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
+    os.system("open /Applications/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
 
   def loadProjectClicked(self):
     print("loadProjectClicked")
@@ -478,7 +478,6 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))
     print(swCmd)
-    #self.addLog(swCmd)
     ep = self.runShapeworks(inputParams, self.getShapeworksPath())
     self.logProcessOutput(ep, self.shapeworksFilename)
 
