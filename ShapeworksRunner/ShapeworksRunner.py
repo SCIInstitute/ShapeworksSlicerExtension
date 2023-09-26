@@ -61,18 +61,18 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     uiWidget.setPalette(slicer.util.mainWindow().style().standardPalette())
 
     # Finish UI setup ...
-    self.ui.parameterNodeSelector.addAttribute( "vtkMRMLScriptedModuleNode", "ModuleName", "ShapeworksRunner" )
-    self.ui.parameterNodeSelector.setMRMLScene( slicer.mrmlScene )
+    #self.ui.parameterNodeSelector.addAttribute( "vtkMRMLScriptedModuleNode", "ModuleName", "ShapeworksRunner" )
+    #self.ui.parameterNodeSelector.setMRMLScene( slicer.mrmlScene )
     self.ui.inputSegmentationSelector.setMRMLScene( slicer.mrmlScene )
-    self.ui.inputModelSelector.setMRMLScene( slicer.mrmlScene )
-    self.ui.outputModelSelector.setMRMLScene( slicer.mrmlScene )
+    #self.ui.inputModelSelector.setMRMLScene( slicer.mrmlScene )
+    #self.ui.outputModelSelector.setMRMLScene( slicer.mrmlScene )
 
     customShapeworksPath = self.logic.getCustomShapeworksPath()
     self.ui.customShapeworksPathSelector.setCurrentPath(customShapeworksPath)
     self.ui.customShapeworksPathSelector.nameFilters = [self.logic.shapeworksFilename]
 
-    clipNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLClipModelsNode")
-    self.ui.clipNodeWidget.setMRMLClipNode(clipNode)
+    #clipNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLClipModelsNode")
+    #self.ui.clipNodeWidget.setMRMLClipNode(clipNode)
 
     # These connections ensure that we update parameter node when scene is closed
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.StartCloseEvent, self.onSceneStartClose)
@@ -83,8 +83,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.showTemporaryFilesFolderButton.connect('clicked(bool)', self.onShowTemporaryFilesFolder)
     #self.ui.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
     self.ui.inputSegmentationSelector.connect("checkedNodesChanged()", self.updateMRMLFromGUI)
-    self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
-    self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
+    #self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
+    #self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
     # Immediately update deleteTemporaryFiles in the logic to make it possible to decide to
     # keep the temporary file while the model generation is running
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.onKeepTemporaryFilesToggled)
@@ -107,8 +107,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     #Parameter node connections
     self.ui.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-    self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-    self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+    #self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+    #self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
 
     self.ui.showDetailedLogDuringExecutionCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
@@ -120,8 +120,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Make sure parameter node is initialized (needed for module reload)
     self.initializeParameterNode()
-    self.ui.parameterNodeSelector.setCurrentNode(self._parameterNode)
-    self.ui.parameterNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)",  self.setParameterNode)
+    #self.ui.parameterNodeSelector.setCurrentNode(self._parameterNode)
+    #self.ui.parameterNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)",  self.setParameterNode)
 
     # Refresh Apply button state
     self.updateMRMLFromGUI()
@@ -219,8 +219,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Update node selectors and sliders
     self.ui.inputSegmentationSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputSegmentation"))
-    self.ui.inputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputSurface"))
-    self.ui.outputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputModel"))
+    #self.ui.inputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputSurface"))
+    #self.ui.outputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputModel"))
 
     self.ui.showDetailedLogDuringExecutionCheckBox.checked = (self._parameterNode.GetParameter("showDetailedLogDuringExecution") == "true")
     self.ui.keepTemporaryFilesCheckBox.checked = (self._parameterNode.GetParameter("keepTemporaryFiles") == "true")
@@ -246,8 +246,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     #Inputs/Outputs
     self._parameterNode.SetNodeReferenceID("InputSegmentation", self.ui.inputSegmentationSelector.currentNodeID)
-    self._parameterNode.SetNodeReferenceID("InputSurface", self.ui.inputModelSelector.currentNodeID)
-    self._parameterNode.SetNodeReferenceID("OutputModel", self.ui.outputModelSelector.currentNodeID)
+    #self._parameterNode.SetNodeReferenceID("InputSurface", self.ui.inputModelSelector.currentNodeID)
+    #self._parameterNode.SetNodeReferenceID("OutputModel", self.ui.outputModelSelector.currentNodeID)
 
     #General parameters
     self._parameterNode.SetParameter("showDetailedLogDuringExecution", "true" if self.ui.showDetailedLogDuringExecutionCheckBox.checked else "false")
@@ -264,8 +264,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.inputSegmentationSelector.visible = not inputIsModel
     self.ui.segmentSelectorLabel.visible = not inputIsModel
     self.ui.segmentSelectorCombBox.visible = not inputIsModel
-    self.ui.inputModelLabel.visible = inputIsModel
-    self.ui.inputModelSelector.visible = inputIsModel
+    #self.ui.inputModelLabel.visible = inputIsModel
+    #self.ui.inputModelSelector.visible = inputIsModel
     self.ui.segmentSelectorCombBox.enabled = self.ui.inputSegmentationSelector.currentNode() is not None
 
     self.ui.segmentSelectorCombBox.clear()
