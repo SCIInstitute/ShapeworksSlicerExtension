@@ -306,9 +306,9 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     print("setWorkingDirectoryClicked")
 
   def launchShapeWorksClicked(self):
-    print("launchShapeWorksClicked")
     inputParams = ["--name={0}".format(self.logic.projectFileName)]
-    os.system("open /Applications/ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio")
+    os.unsetenv("QT_PLUGIN_PATH")
+    os.system("open /Applications/ShapeWorksStudio.app")
 
   def loadProjectClicked(self):
     print("loadProjectClicked")
