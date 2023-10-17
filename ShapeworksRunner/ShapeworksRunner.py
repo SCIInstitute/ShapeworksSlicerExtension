@@ -307,8 +307,13 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   def launchShapeWorksClicked(self):
     inputParams = ["--name={0}".format(self.logic.projectFileName)]
+    from sys import platform
     os.unsetenv("QT_PLUGIN_PATH")
-    os.system("open /Applications/ShapeWorksStudio.app")
+    if platform == "win32":
+      import subprocess
+      subprocess.run(r"C:\Program Files\ShapeWorks\bin\ShapeWorksStudio.exe")
+    else:
+      os.system("open /Applications/ShapeWorksStudio.app")
 
   def loadProjectClicked(self):
     print("loadProjectClicked")
