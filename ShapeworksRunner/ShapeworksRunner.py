@@ -369,7 +369,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     self.customShapeworksPathSettingsKey = 'ShapeworksRunner/CustomShapeworksPath'
     import os
     self.scriptPath = os.path.dirname(os.path.abspath(__file__))
-    self.shapeworksPath = "/Applications/ShapeWorks/bin/shapeworks" # this will be determined dynamically
+    self.shapeworksPath = self.shapeworksExecutablePath()
     self.projectFileName = ""
     self.shapeworksTempDir = self.createTempDirectory()
 
@@ -405,6 +405,13 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     logging.info(text)
     if self.logCallback:
       self.logCallback(text)
+      
+  def shapeworksExecutablePath(self):
+    from sys import platform
+    if platform == "win32":
+      return r"C:\Program Files\ShapeWorks\bin\shapeworks.exe"
+    else:
+      return "/Applications/ShapeWorks/bin/shapeworks"
 
   def getShapeworksPath(self):
     if self.shapeworksPath:
@@ -483,6 +490,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))
     print(swCmd)
+    os.unsetenv("QT_PLUGIN_PATH")
     ep = self.runShapeworks(inputParams, self.getShapeworksPath())
     self.logProcessOutput(ep, self.shapeworksFilename)
 
@@ -562,7 +570,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def getTempDirectoryBase(self):
     tempDir = qt.QDir(slicer.app.temporaryPath)
     fileInfo = qt.QFileInfo(qt.QDir(tempDir), "ShapeworksRunner")
-    dirPath = fileInfo.absoluteFilePath()
+    dirPath = qt.QDir.toNativeSeparators(fileInfo.absoluteFilePath())
     qt.QDir().mkpath(dirPath)
     return dirPath
 
@@ -571,7 +579,8 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     tempDir = qt.QDir(self.getTempDirectoryBase())
     tempDirName = qt.QDateTime().currentDateTime().toString("yyyyMMdd_hhmmss_zzz")
     fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
-    dirPath = fileInfo.absoluteFilePath()
+    dirPath = qt.QDir.toNativeSeparators(fileInfo.absoluteFilePath())
+    print(f"dirPath: {dirPath}")
     qt.QDir().mkpath(dirPath)
     return dirPath
 
