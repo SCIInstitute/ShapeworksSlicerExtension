@@ -324,7 +324,7 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
   def saveGroomClicked(self):
     print("saveGroomClicked")
-    #self.logic.loadResultsOfShapeworksProject()
+    self.logic.saveGroomedFiles()
 
   def saveOptimizeClicked(self):
     print("saveOptimizeClicked")
@@ -486,6 +486,21 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     print("Filename to save:", file_name)
     import shutil
     shutil.copyfile(self.projectFileName, file_name)
+    
+  def saveGroomedFiles(self):
+    dir = qt.QFileDialog.getExistingDirectory(None, "Open Directory", self.shapeworksTempDir, qt.QFileDialog.ShowDirsOnly | qt.QFileDialog.DontResolveSymlinks)
+    #print("Dir to save groomed files:", dir)
+    with open(self.projectFileName) as projFile:
+      data = json.load(projFile)
+      #print(data["data"])
+      for d in data["data"]:
+        #print(d["name"])
+        #print(d["groomed_file"])
+        _, groomFile = os.path.split(d["groomed_file"])
+        fullGroomPath = os.path.join(self.shapeworksTempDir, d["groomed_file"])
+        #print(fullGroomPath)
+        import shutil
+        shutil.copyfile(fullGroomPath, os.path.join(dir, groomFile))
 
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))
@@ -497,8 +512,8 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def groomShapeworksProject(self):
     inputParams = ["groom", "--name={0}".format(self.projectFileName), "--progress"]
     self.runShapeworksCommand(inputParams, inputParams[0])
-    print("Groomed files:")
-    print(os.listdir(os.path.join(self.shapeworksTempDir, "groomed")))
+    self.addLog("Groomed files:")
+    self.addLog(os.listdir(os.path.join(self.shapeworksTempDir, "groomed")))
 
   def optimizeShapeworksProject(self):
     inputParams = ["optimize", "--name={0}".format(self.projectFileName)]
