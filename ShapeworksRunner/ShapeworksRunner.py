@@ -323,12 +323,10 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.logic.saveProject()
 
   def saveGroomClicked(self):
-    print("saveGroomClicked")
     self.logic.saveGroomedFiles()
 
   def saveOptimizeClicked(self):
-    print("saveOptimizeClicked")
-    #self.logic.loadResultsOfShapeworksProject()
+    self.logic.saveOptimizedFiles()
 
   def saveResultsClicked(self):
     print("saveResultsClicked")
@@ -501,6 +499,19 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
         #print(fullGroomPath)
         import shutil
         shutil.copyfile(fullGroomPath, os.path.join(dir, groomFile))
+        
+  def saveOptimizedFiles(self):
+    dir = qt.QFileDialog.getExistingDirectory(None, "Open Directory", self.shapeworksTempDir, qt.QFileDialog.ShowDirsOnly | qt.QFileDialog.DontResolveSymlinks)
+    with open(self.projectFileName) as projFile:
+      data = json.load(projFile)
+      for d in data["data"]:
+        #print(d["name"])
+        #print(d["groomed_file"])
+        _, groomFile = os.path.split(d["world_particles_file"])
+        fullGroomPath = os.path.join(self.shapeworksTempDir, d["world_particles_file"])
+        #print(fullGroomPath)
+        import shutil
+        shutil.copyfile(fullGroomPath, os.path.join(dir, groomFile))
 
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))
@@ -518,8 +529,8 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def optimizeShapeworksProject(self):
     inputParams = ["optimize", "--name={0}".format(self.projectFileName)]
     self.runShapeworksCommand(inputParams, inputParams[0])
-    print("Optimized files:")
-    print(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
+    self.addLog("Optimized files:")
+    self.addLog(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
 
   def loadResultsOfShapeworksProject(self):
     print("This requires Shapeworks 6.5+")
