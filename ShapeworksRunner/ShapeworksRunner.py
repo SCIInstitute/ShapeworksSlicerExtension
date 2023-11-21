@@ -487,31 +487,23 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     
   def saveGroomedFiles(self):
     dir = qt.QFileDialog.getExistingDirectory(None, "Open Directory", self.shapeworksTempDir, qt.QFileDialog.ShowDirsOnly | qt.QFileDialog.DontResolveSymlinks)
-    #print("Dir to save groomed files:", dir)
     with open(self.projectFileName) as projFile:
       data = json.load(projFile)
-      #print(data["data"])
       for d in data["data"]:
-        #print(d["name"])
-        #print(d["groomed_file"])
-        _, groomFile = os.path.split(d["groomed_file"])
-        fullGroomPath = os.path.join(self.shapeworksTempDir, d["groomed_file"])
-        #print(fullGroomPath)
+        _, filename = os.path.split(d["groomed_file"])
+        fileToCopy = os.path.join(self.shapeworksTempDir, d["groomed_file"])
         import shutil
-        shutil.copyfile(fullGroomPath, os.path.join(dir, groomFile))
+        shutil.copyfile(fileToCopy, os.path.join(dir, filename))
         
   def saveOptimizedFiles(self):
     dir = qt.QFileDialog.getExistingDirectory(None, "Open Directory", self.shapeworksTempDir, qt.QFileDialog.ShowDirsOnly | qt.QFileDialog.DontResolveSymlinks)
     with open(self.projectFileName) as projFile:
       data = json.load(projFile)
       for d in data["data"]:
-        #print(d["name"])
-        #print(d["groomed_file"])
-        _, groomFile = os.path.split(d["world_particles_file"])
-        fullGroomPath = os.path.join(self.shapeworksTempDir, d["world_particles_file"])
-        #print(fullGroomPath)
+        _, filename = os.path.split(d["world_particles_file"])
+        fileToCopy = os.path.join(self.shapeworksTempDir, d["world_particles_file"])
         import shutil
-        shutil.copyfile(fullGroomPath, os.path.join(dir, groomFile))
+        shutil.copyfile(fileToCopy, os.path.join(dir, filename))
 
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))
