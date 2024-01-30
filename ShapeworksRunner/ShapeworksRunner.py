@@ -61,44 +61,54 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     uiWidget.setPalette(slicer.util.mainWindow().style().standardPalette())
 
     # Finish UI setup ...
-    self.ui.parameterNodeSelector.addAttribute( "vtkMRMLScriptedModuleNode", "ModuleName", "ShapeworksRunner" )
-    self.ui.parameterNodeSelector.setMRMLScene( slicer.mrmlScene )
+    #self.ui.parameterNodeSelector.addAttribute( "vtkMRMLScriptedModuleNode", "ModuleName", "ShapeworksRunner" )
+    #self.ui.parameterNodeSelector.setMRMLScene( slicer.mrmlScene )
     self.ui.inputSegmentationSelector.setMRMLScene( slicer.mrmlScene )
-    self.ui.inputModelSelector.setMRMLScene( slicer.mrmlScene )
-    self.ui.outputModelSelector.setMRMLScene( slicer.mrmlScene )
+    #self.ui.inputModelSelector.setMRMLScene( slicer.mrmlScene )
+    #self.ui.outputModelSelector.setMRMLScene( slicer.mrmlScene )
 
     customShapeworksPath = self.logic.getCustomShapeworksPath()
     self.ui.customShapeworksPathSelector.setCurrentPath(customShapeworksPath)
     self.ui.customShapeworksPathSelector.nameFilters = [self.logic.shapeworksFilename]
 
-    clipNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLClipModelsNode")
-    self.ui.clipNodeWidget.setMRMLClipNode(clipNode)
+    #clipNode = slicer.mrmlScene.GetFirstNodeByClass("vtkMRMLClipModelsNode")
+    #self.ui.clipNodeWidget.setMRMLClipNode(clipNode)
 
     # These connections ensure that we update parameter node when scene is closed
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.StartCloseEvent, self.onSceneStartClose)
     self.addObserver(slicer.mrmlScene, slicer.mrmlScene.EndCloseEvent, self.onSceneEndClose)
 
     # connections
-    self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
+    #self.ui.applyButton.connect('clicked(bool)', self.onApplyButton)
     self.ui.showTemporaryFilesFolderButton.connect('clicked(bool)', self.onShowTemporaryFilesFolder)
     #self.ui.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
     self.ui.inputSegmentationSelector.connect("checkedNodesChanged()", self.updateMRMLFromGUI)
-    self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
-    self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
+    #self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
+    #self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateMRMLFromGUI)
     # Immediately update deleteTemporaryFiles in the logic to make it possible to decide to
     # keep the temporary file while the model generation is running
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.onKeepTemporaryFilesToggled)
 
     # Shapeworks steps
+    self.ui.launchShapeWorksPushButton_.connect("clicked(bool)", self.launchShapeWorksClicked)
     self.ui.generateProjectPushButton_.connect("clicked(bool)", self.generateProjectClicked)
     self.ui.groomPushButton_.connect("clicked(bool)", self.groomClicked)
     self.ui.optimizePushButton_.connect("clicked(bool)", self.optimizeClicked)
     self.ui.loadResultsPushButton_.connect("clicked(bool)", self.loadResultsClicked)
+    # ShapeWorks file handling
+    self.ui.setWorkingDirectoryPushButton_.connect("clicked(bool)", self.setWorkingDirectoryClicked)
+    self.ui.loadProjectPushButton_.connect("clicked(bool)", self.loadProjectClicked)
+    self.ui.saveProjectPushButton_.connect("clicked(bool)", self.saveProjectClicked)
+    self.ui.saveGroomedPushButton_.connect("clicked(bool)", self.saveGroomClicked)
+    self.ui.saveOptimizePushButton_.connect("clicked(bool)", self.saveOptimizeClicked)
+    self.ui.saveResultsPushButton_.connect("clicked(bool)", self.saveResultsClicked)
+
+    self.ui.loadDocsButton_.connect("clicked(bool)", self.loadDocsClicked)
 
     #Parameter node connections
     self.ui.inputSegmentationSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-    self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
-    self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+    #self.ui.inputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
+    #self.ui.outputModelSelector.connect("currentNodeChanged(vtkMRMLNode*)", self.updateParameterNodeFromGUI)
 
     self.ui.showDetailedLogDuringExecutionCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
     self.ui.keepTemporaryFilesCheckBox.connect("toggled(bool)", self.updateParameterNodeFromGUI)
@@ -110,8 +120,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Make sure parameter node is initialized (needed for module reload)
     self.initializeParameterNode()
-    self.ui.parameterNodeSelector.setCurrentNode(self._parameterNode)
-    self.ui.parameterNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)",  self.setParameterNode)
+    #self.ui.parameterNodeSelector.setCurrentNode(self._parameterNode)
+    #self.ui.parameterNodeSelector.connect("currentNodeChanged(vtkMRMLNode*)",  self.setParameterNode)
 
     # Refresh Apply button state
     self.updateMRMLFromGUI()
@@ -209,8 +219,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     # Update node selectors and sliders
     self.ui.inputSegmentationSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputSegmentation"))
-    self.ui.inputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputSurface"))
-    self.ui.outputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputModel"))
+    #self.ui.inputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("InputSurface"))
+    #self.ui.outputModelSelector.setCurrentNode(self._parameterNode.GetNodeReference("OutputModel"))
 
     self.ui.showDetailedLogDuringExecutionCheckBox.checked = (self._parameterNode.GetParameter("showDetailedLogDuringExecution") == "true")
     self.ui.keepTemporaryFilesCheckBox.checked = (self._parameterNode.GetParameter("keepTemporaryFiles") == "true")
@@ -236,8 +246,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
 
     #Inputs/Outputs
     self._parameterNode.SetNodeReferenceID("InputSegmentation", self.ui.inputSegmentationSelector.currentNodeID)
-    self._parameterNode.SetNodeReferenceID("InputSurface", self.ui.inputModelSelector.currentNodeID)
-    self._parameterNode.SetNodeReferenceID("OutputModel", self.ui.outputModelSelector.currentNodeID)
+    #self._parameterNode.SetNodeReferenceID("InputSurface", self.ui.inputModelSelector.currentNodeID)
+    #self._parameterNode.SetNodeReferenceID("OutputModel", self.ui.outputModelSelector.currentNodeID)
 
     #General parameters
     self._parameterNode.SetParameter("showDetailedLogDuringExecution", "true" if self.ui.showDetailedLogDuringExecutionCheckBox.checked else "false")
@@ -254,8 +264,8 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
     self.ui.inputSegmentationSelector.visible = not inputIsModel
     self.ui.segmentSelectorLabel.visible = not inputIsModel
     self.ui.segmentSelectorCombBox.visible = not inputIsModel
-    self.ui.inputModelLabel.visible = inputIsModel
-    self.ui.inputModelSelector.visible = inputIsModel
+    #self.ui.inputModelLabel.visible = inputIsModel
+    #self.ui.inputModelSelector.visible = inputIsModel
     self.ui.segmentSelectorCombBox.enabled = self.ui.inputSegmentationSelector.currentNode() is not None
 
     self.ui.segmentSelectorCombBox.clear()
@@ -292,38 +302,41 @@ class ShapeworksRunnerWidget(ScriptedLoadableModuleWidget, VTKObservationMixin):
   def loadResultsClicked(self):
     self.logic.loadResultsOfShapeworksProject()
 
-  def onApplyButton(self):
-    if self.modelGenerationInProgress:
-      self.modelGenerationInProgress = False
-      self.logic.abortRequested = True
-      self.ui.applyButton.text = "Cancelling..."
-      self.ui.applyButton.enabled = False
-      return
+  def setWorkingDirectoryClicked(self):
+    print("setWorkingDirectoryClicked")
 
-    self.modelGenerationInProgress = True
-    self.ui.applyButton.text = "Cancel"
-    self.ui.statusLabel.plainText = ''
-    slicer.app.setOverrideCursor(qt.Qt.WaitCursor)
-    try:
-      self.logic.deleteTemporaryFiles = not self.ui.keepTemporaryFilesCheckBox.checked
-      self.logic.logStandardOutput = self.ui.showDetailedLogDuringExecutionCheckBox.checked
+  def launchShapeWorksClicked(self):
+    inputParams = ["--name={0}".format(self.logic.projectFileName)]
+    from sys import platform
+    os.unsetenv("QT_PLUGIN_PATH")
+    if platform == "win32":
+      import subprocess
+      subprocess.run(r"C:\Program Files\ShapeWorks\bin\ShapeWorksStudio.exe")
+    else:
+      os.system("open /Applications/ShapeWorksStudio.app")
 
-      #Get list of segments to process
-      segmentIndexes = self.ui.segmentSelectorCombBox.checkedIndexes()
-      segments = []
+  def loadProjectClicked(self):
+    print("loadProjectClicked")
+    #self.logic.loadResultsOfShapeworksProject()
 
-      for index in segmentIndexes:
-        segments.append(self.ui.segmentSelectorCombBox.itemText(index.row()))
+  def saveProjectClicked(self):
+    self.logic.saveProject()
 
-    except Exception as e:
-      print(e)
-      self.addLog("Error: {0}".format(str(e)))
-      import traceback
-      traceback.print_exc()
-    finally:
-      slicer.app.restoreOverrideCursor()
-      self.modelGenerationInProgress = False
-      self.updateMRMLFromGUI() # restores default Apply button state
+  def saveGroomClicked(self):
+    self.logic.saveGroomedFiles()
+
+  def saveOptimizeClicked(self):
+    self.logic.saveOptimizedFiles()
+
+  def saveResultsClicked(self):
+    print("saveResultsClicked")
+    #self.logic.loadResultsOfShapeworksProject()
+
+  def loadDocsClicked(self):
+    print("loadDocsClicked")
+    import webbrowser
+    webbrowser.open("http://sciinstitute.github.io/ShapeWorks/latest/")
+    #self.logic.loadResultsOfShapeworksProject()
 
   def addLog(self, text):
     """Append text to log window
@@ -354,7 +367,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     self.customShapeworksPathSettingsKey = 'ShapeworksRunner/CustomShapeworksPath'
     import os
     self.scriptPath = os.path.dirname(os.path.abspath(__file__))
-    self.shapeworksPath = "/Applications/ShapeWorks/bin/shapeworks" # this will be determined dynamically
+    self.shapeworksPath = self.shapeworksExecutablePath()
     self.projectFileName = ""
     self.shapeworksTempDir = self.createTempDirectory()
 
@@ -390,6 +403,13 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     logging.info(text)
     if self.logCallback:
       self.logCallback(text)
+      
+  def shapeworksExecutablePath(self):
+    from sys import platform
+    if platform == "win32":
+      return r"C:\Program Files\ShapeWorks\bin\shapeworks.exe"
+    else:
+      return "/Applications/ShapeWorks/bin/shapeworks"
 
   def getShapeworksPath(self):
     if self.shapeworksPath:
@@ -459,24 +479,50 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
       outfile.write(jProj)
     print("Wrote: ", self.projectFileName)
 
+  def saveProject(self):
+    file_name = qt.QFileDialog.getSaveFileName(None, "Save ShapeWorks Project File","","All Files (*);;Json Files(*.json)")
+    print("Filename to save:", file_name)
+    import shutil
+    shutil.copyfile(self.projectFileName, file_name)
+    
+  def saveGroomedFiles(self):
+    dir = qt.QFileDialog.getExistingDirectory(None, "Open Directory", self.shapeworksTempDir, qt.QFileDialog.ShowDirsOnly | qt.QFileDialog.DontResolveSymlinks)
+    with open(self.projectFileName) as projFile:
+      data = json.load(projFile)
+      for d in data["data"]:
+        _, filename = os.path.split(d["groomed_file"])
+        fileToCopy = os.path.join(self.shapeworksTempDir, d["groomed_file"])
+        import shutil
+        shutil.copyfile(fileToCopy, os.path.join(dir, filename))
+        
+  def saveOptimizedFiles(self):
+    dir = qt.QFileDialog.getExistingDirectory(None, "Open Directory", self.shapeworksTempDir, qt.QFileDialog.ShowDirsOnly | qt.QFileDialog.DontResolveSymlinks)
+    with open(self.projectFileName) as projFile:
+      data = json.load(projFile)
+      for d in data["data"]:
+        _, filename = os.path.split(d["world_particles_file"])
+        fileToCopy = os.path.join(self.shapeworksTempDir, d["world_particles_file"])
+        import shutil
+        shutil.copyfile(fileToCopy, os.path.join(dir, filename))
+
   def runShapeworksCommand(self, inputParams, name):
     swCmd = "{0}: {1} {2}".format(name, self.shapeworksPath, ' '.join(inputParams))
     print(swCmd)
-    #self.addLog(swCmd)
+    os.unsetenv("QT_PLUGIN_PATH")
     ep = self.runShapeworks(inputParams, self.getShapeworksPath())
     self.logProcessOutput(ep, self.shapeworksFilename)
 
   def groomShapeworksProject(self):
     inputParams = ["groom", "--name={0}".format(self.projectFileName), "--progress"]
     self.runShapeworksCommand(inputParams, inputParams[0])
-    print("Groomed files:")
-    print(os.listdir(os.path.join(self.shapeworksTempDir, "groomed")))
+    self.addLog("Groomed files:")
+    self.addLog(os.listdir(os.path.join(self.shapeworksTempDir, "groomed")))
 
   def optimizeShapeworksProject(self):
     inputParams = ["optimize", "--name={0}".format(self.projectFileName)]
     self.runShapeworksCommand(inputParams, inputParams[0])
-    print("Optimized files:")
-    print(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
+    self.addLog("Optimized files:")
+    self.addLog(os.listdir(os.path.join(self.shapeworksTempDir, "shapeworksProject_particles")))
 
   def loadResultsOfShapeworksProject(self):
     print("This requires Shapeworks 6.5+")
@@ -542,7 +588,7 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
   def getTempDirectoryBase(self):
     tempDir = qt.QDir(slicer.app.temporaryPath)
     fileInfo = qt.QFileInfo(qt.QDir(tempDir), "ShapeworksRunner")
-    dirPath = fileInfo.absoluteFilePath()
+    dirPath = qt.QDir.toNativeSeparators(fileInfo.absoluteFilePath())
     qt.QDir().mkpath(dirPath)
     return dirPath
 
@@ -551,7 +597,8 @@ class ShapeworksRunnerLogic(ScriptedLoadableModuleLogic):
     tempDir = qt.QDir(self.getTempDirectoryBase())
     tempDirName = qt.QDateTime().currentDateTime().toString("yyyyMMdd_hhmmss_zzz")
     fileInfo = qt.QFileInfo(qt.QDir(tempDir), tempDirName)
-    dirPath = fileInfo.absoluteFilePath()
+    dirPath = qt.QDir.toNativeSeparators(fileInfo.absoluteFilePath())
+    print(f"dirPath: {dirPath}")
     qt.QDir().mkpath(dirPath)
     return dirPath
 
